@@ -23,7 +23,7 @@ public class Elevator implements Runnable {
         this.currentFloor = 1;
         this.direction = Direction.NONE;
         this.status = ElevatorStatus.STOPPED;
-    };
+    }
 
     public void run() {
         while(true) {
@@ -87,12 +87,12 @@ public class Elevator implements Runnable {
         if(currentFloor < dispatcher.getCountFloors() && status == ElevatorStatus.MOVING_UP){
             currentFloor++;
             direction = Direction.UP;
-            System.out.println("лифт " + id + " на " + currentFloor + " этаже");
+            System.out.println("Лифт " + id + " на " + currentFloor + " этаже");
         }
         else if(currentFloor > 1 && status == ElevatorStatus.MOVING_DOWN){
             currentFloor--;
             direction = Direction.DOWN;
-            System.out.println("лифт на " + currentFloor + " этаже");
+            System.out.println("Лифт " + id + " на " + currentFloor + " этаже");
         }
     }
 
@@ -161,7 +161,15 @@ public class Elevator implements Runnable {
     public void boardingPeople(Request request){
         if(request.getCountPeople() + countPeople <= 8) {
             countPeople += request.getCountPeople();
-            System.out.println("В лифт зашло " + request.getCountPeople() + " человек");
+            if(request.getCountPeople() == 1) {
+                System.out.println("В лифт зашел " + request.getCountPeople() + " человек");
+            }
+            else if(request.getCountPeople() == 2 || request.getCountPeople() == 3 || request.getCountPeople() == 4){
+                System.out.println("В лифт зашло " + request.getCountPeople() + " человека");
+            }
+            else if(request.getCountPeople() == 5 || request.getCountPeople() == 6 || request.getCountPeople() == 7 || request.getCountPeople() == 8) {
+                System.out.println("В лифт зашло " + request.getCountPeople() + " человек");
+            }
         }
         else if(countPeople == 8){
             Request additionalRequest = new Request(request.getCurrentFloor(), request.getCountPeople());
@@ -169,7 +177,16 @@ public class Elevator implements Runnable {
             dispatcher.sendRequest();
         }
         else if(request.getCountPeople() + countPeople > 8){
-            System.out.println("В лифт зашло " + (8 - countPeople) + " человек");
+            int count = 8 - countPeople;
+            if(count == 1) {
+                System.out.println("В лифт зашел " + count + " человек");
+            }
+            else if(count == 2 || count == 3 || count == 4){
+                System.out.println("В лифт зашло " + count + " человека");
+            }
+            else if(count == 5 || count == 6 || count == 7 || count == 8){
+                System.out.println("В лифт зашло " + count + " человек");
+            }
             Request additionalRequest = new Request(request.getCurrentFloor(), request.getCountPeople() - 8 + countPeople);
             dispatcher.addRequest(additionalRequest);
             dispatcher.sendRequest();
@@ -179,7 +196,15 @@ public class Elevator implements Runnable {
 
     public void disembarkingPeople(Command command){
         countPeople -= command.getCountPeople();
-        System.out.println("Из лифта вышло " + command.getCountPeople() + " человек");
+        if(command.getCountPeople() == 1) {
+            System.out.println("Из лифта вышел " + command.getCountPeople() + " человек");
+        }
+        else if(command.getCountPeople() == 2 || command.getCountPeople() == 3 || command.getCountPeople() == 4){
+            System.out.println("Из лифта вышло " + command.getCountPeople() + " человека");
+        }
+        else if(command.getCountPeople() == 5 || command.getCountPeople() == 6 || command.getCountPeople() == 7 || command.getCountPeople() == 8) {
+            System.out.println("Из лифта вышло " + command.getCountPeople() + " человек");
+        }
     }
 
     public boolean addCommand(Direction direction, int targetFloor) {
@@ -202,9 +227,6 @@ public class Elevator implements Runnable {
 
     public void setDispatcher(Dispatcher dispatcher){
         this.dispatcher = dispatcher;
-    }
-    public void setStatus(ElevatorStatus status) {
-        this.status = status;
     }
 
     public void addRequest(Request request) {

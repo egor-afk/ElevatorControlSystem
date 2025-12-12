@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,7 +17,7 @@ public class Dispatcher implements Runnable{
         for(int i = 0; i < countElevators; i++){
             elevators.add(new Elevator(i+1));
         }
-    };
+    }
 
     public void run(){
         while(true){
@@ -26,9 +27,9 @@ public class Dispatcher implements Runnable{
                     foundWaiting = true;
                     System.out.println("Лифт " + elevator.getId() + " ждет команду");
                     System.out.println("Укажите направление для лифта " + elevator.getId());
-                    String direction = scan.nextLine();
+                    String direction = getString(scan);
                     System.out.println("Укажите этаж для лифта " + elevator.getId());
-                    int floor = scan.nextInt();
+                    int floor = getInt(scan);
                     scan.nextLine();
                     Direction direction1 = null;
                     if (direction.equals("Up")) {
@@ -107,6 +108,42 @@ public class Dispatcher implements Runnable{
             return (elevator.getCurrentFloor() + request.getCurrentFloor()) - 2;
         }
         return 2000;
+    }
+
+    private int getInt(Scanner scan){
+        while(true) {
+            try {
+                int value = scan.nextInt();
+                if(value < 1 || value > countFloors){
+                    System.out.println("Номер этажа должет быть от 1 до " + countFloors);
+                    continue;
+                }
+                return value;
+            } catch (InputMismatchException e) {
+                System.out.println("Ошибка: введите номер этажа");
+                scan.nextLine();
+            }
+        }
+    }
+
+    private String getString(Scanner scan){
+        while(true) {
+            try {
+                String str = scan.nextLine();
+                if(str.isEmpty()){
+                    System.out.println("Строка не может быть пустой");
+                    continue;
+                }
+                if(!str.equals("Up") && !str.equals("Down")){
+                    System.out.println("Направление должно быть Up или Down");
+                    continue;
+                }
+                return str;
+            } catch (InputMismatchException e) {
+                System.out.println("Ошибка: введите направление для лифта");
+                scan.nextLine();
+            }
+        }
     }
     public int getCountFloors(){
         return countFloors;
