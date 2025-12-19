@@ -26,7 +26,7 @@ public class Elevator implements Runnable {
     }
 
     public void run() {
-        while(true) {
+        while(dispatcher != null && dispatcher.isProgramRunning()) {
             synchronized (lock) {
                 if (!requests.isEmpty()) {
                     if (currentFloor < requests.getFirst().getCurrentFloor()) {
@@ -39,7 +39,6 @@ public class Elevator implements Runnable {
                     while (currentFloor != requests.getFirst().getCurrentFloor()) {
                         ElevatorStatus currentStatus = status;
                         if(goalFloors.contains(currentFloor)){
-                            System.out.println("cicle");
                             stop();
                         }
                         try {
@@ -75,12 +74,16 @@ public class Elevator implements Runnable {
                     }
                 }
             }
+            if (requests.isEmpty() && commands.isEmpty() && !dispatcher.isProgramRunning()) {
+                break;
+            }
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
+        System.out.println("Лифт " + id + " завершает работу");
     }
 
     public void move(){
@@ -234,6 +237,14 @@ public class Elevator implements Runnable {
             this.requests.add(request);
             this.goalFloors.add(request.getCurrentFloor());
         }
+    }
+
+    public List<Request> getRequests(){
+        return requests;
+    }
+
+    public List<Command> getCommands(){
+        return commands;
     }
 
     public int getId(){

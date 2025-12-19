@@ -1,7 +1,7 @@
 import java.lang.Thread;
 import java.util.List;
 
-public class Main{
+public class Main {
     public static void main(String[] args) throws InterruptedException {
         Dispatcher dispatcher = new Dispatcher(10, 2);
         List<Elevator> elevators = dispatcher.getElevators();
@@ -18,7 +18,7 @@ public class Main{
         dispatcherTread.start();
         Thread.sleep(5000);
 
-        System.out.println("\n--- СОЗДАЕМ ЗАПРОСЫ ---");
+        System.out.println("\n=== СОЗДАЕМ ЗАПРОСЫ ===");
         Request[] requests = {
                 new Request(5, 3),
                 new Request(3, 4),
@@ -33,6 +33,7 @@ public class Main{
             dispatcher.sendRequest();
             Thread.sleep(1000);
         }
+        dispatcher.setAllRequestsProcessed(true);
         System.out.println("\n=== СИСТЕМА ЗАПУЩЕНА ===");
         System.out.println("Центр управления будет запрашивать направления\n");
         dispatcherTread.join();

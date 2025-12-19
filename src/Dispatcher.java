@@ -9,6 +9,8 @@ public class Dispatcher implements Runnable{
     private final int countElevators;
     private final List<Elevator> elevators = new ArrayList<>();
     private final List<Request> requests = new ArrayList<>();
+    private boolean programRunning = true;
+    private boolean allRequestsProcessed = false;
     Scanner scan = new Scanner(System.in);
 
     public Dispatcher(int countFloors, int countElevators){
@@ -19,8 +21,23 @@ public class Dispatcher implements Runnable{
         }
     }
 
+    public void setAllRequestsProcessed(boolean value) {
+        this.allRequestsProcessed = value;
+    }
+
+    public boolean isProgramRunning() {
+        return programRunning;
+    }
+
     public void run(){
-        while(true){
+        while(programRunning){
+            if (allRequestsProcessed && areAllElevatorsIdle()) {
+                System.out.println("\n=== ВСЕ ЗАПРОСЫ И КОМАНДЫ ВЫПОЛНЕНЫ ===");
+                System.out.println("Программа завершает работу...");
+                programRunning = false;
+                break;
+            }
+
             boolean foundWaiting = false;
             for(Elevator elevator : elevators){
                 if(elevator.isWaitingCommand()){
@@ -46,7 +63,12 @@ public class Dispatcher implements Runnable{
             }
 
             if(!foundWaiting){
-                System.out.println("Нет лифтов ждущих команду");
+                if (requests.isEmpty() && areAllElevatorsIdle()) {
+                    System.out.println("\nНет активных запросов или команд.");
+                }
+                else{
+                    System.out.println("Нет лифтов ждущих команду");
+                }
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {
@@ -55,6 +77,15 @@ public class Dispatcher implements Runnable{
             }
 
         }
+    }
+
+    public boolean areAllElevatorsIdle() {
+        for (Elevator elevator : elevators) {
+            if (!elevator.getRequests().isEmpty() || !elevator.getCommands().isEmpty() ) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void sendRequest(){
